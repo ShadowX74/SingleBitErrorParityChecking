@@ -14,6 +14,8 @@ import java.util.Scanner;
  */
 public class ParityChecking {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
     static Scanner scan = new Scanner(System.in);
     static ArrayList<int[]> phrase = new ArrayList();
     static ArrayList<int[]> check = new ArrayList();
@@ -37,12 +39,10 @@ public class ParityChecking {
     }
 
     public static void tostring(int[] letters) {
-
         for (int i : letters) {
             System.out.print(i + "");
         }
         System.out.println("");
-
     }
 
     public static void tostring(int[] letters, ArrayList<Integer> x) {
@@ -50,12 +50,13 @@ public class ParityChecking {
             boolean out = false;
             for (Integer j : x) {
                 if (i == j) {
-                    
                     out = true;
                 }
             }
             if (!out) {
-                System.out.print(i + "");
+                System.out.print(letters[i] + "");
+            } else {
+                System.out.print(ANSI_RED + letters[i] + "" + ANSI_RESET);
             }
         }
         System.out.println("");
@@ -147,63 +148,94 @@ public class ParityChecking {
     }
 
     public static void checkParity() {
-        check = phrase;
-        for (int[] letter : check) {
+        for (int i = 0; i < phrase.size(); i++) {
+            check.add(new int[11]);
+            for (int j : phrase.get(i)) {
+                check.get(i)[j] = phrase.get(i)[j];
+            }
             //Check bit 1
-            if ((letter[2] + letter[4] + letter[6] + letter[8] + letter[10]) % 2 == 0) {
-                letter[0] = 0;
+            if ((phrase.get(i)[2] + phrase.get(i)[4] + phrase.get(i)[6] + phrase.get(i)[8] + phrase.get(i)[10]) % 2 == 0) {
+                check.get(i)[0] = 0;
             } else {
-                letter[0] = 1;
+                check.get(i)[0] = 1;
             }
             //Check bit 2
-            if ((letter[2] + letter[5] + letter[6] + letter[9] + letter[10]) % 2 == 0) {
-                letter[1] = 0;
+            if ((phrase.get(i)[2] + phrase.get(i)[5] + phrase.get(i)[6] + phrase.get(i)[9] + phrase.get(i)[10]) % 2 == 0) {
+                check.get(i)[1] = 0;
             } else {
-                letter[1] = 1;
+                check.get(i)[1] = 1;
             }
             //Check bit 4
-            if ((letter[5] + letter[6]) % 2 == 0) {
-                letter[3] = 0;
+            if ((phrase.get(i)[4] + phrase.get(i)[5] + phrase.get(i)[6]) % 2 == 0) {
+                check.get(i)[3] = 0;
             } else {
-                letter[3] = 1;
+                check.get(i)[3] = 1;
             }
             //Check bit 8
-            if ((letter[8] + letter[9] + letter[10]) % 2 == 0) {
-                letter[7] = 0;
+            if ((phrase.get(i)[8] + phrase.get(i)[9] + phrase.get(i)[10]) % 2 == 0) {
+                check.get(i)[7] = 0;
             } else {
-                letter[7] = 1;
+                check.get(i)[7] = 1;
             }
         }
 
         for (int i = 0; i < phrase.size(); i++) {
             int wrong = 0;
-            ArrayList<Integer> bits = new ArrayList();
+            ArrayList<Integer> bits = new ArrayList<Integer>();
             //Check bit 1
-            if (!(phrase.get(i)[0] == check.get(i)[0])) {
+            if (phrase.get(i)[0] != check.get(i)[0]) {
                 wrong++;
                 bits.add(0);
             }
             //Check bit 2
-            if (!(phrase.get(i)[1] == check.get(i)[1])) {
+            if (phrase.get(i)[1] != check.get(i)[1]) {
                 wrong++;
                 bits.add(1);
             }
             //Check bit 4
-            if (!(phrase.get(i)[3] == check.get(i)[3])) {
+            if (phrase.get(i)[3] != check.get(i)[3]) {
                 wrong++;
                 bits.add(3);
             }
             //Check bit 8
-            if (!(phrase.get(i)[7] == check.get(i)[7])) {
+            if (phrase.get(i)[7] != check.get(i)[7]) {
                 wrong++;
                 bits.add(7);
             }
+            ArrayList<Integer> wrongbits = new ArrayList<Integer>();
+            ArrayList<Integer> checkbits = new ArrayList<Integer>();
+            checkbits.add(0);
+            checkbits.add(1);
+            checkbits.add(3);
+            checkbits.add(7);
+            ArrayList<Integer> dup = (ArrayList<Integer>) bits.clone();
             if (wrong == 0) {
                 tostring(phrase.get(i));
-            } else if (wrong == 1) {
+            } else if (!dup.retainAll(checkbits)) {
                 tostring(phrase.get(i), bits);
-            } else if () {
-            
+            } else {
+                if (bits.contains(0) && bits.contains(1)) {
+                    wrongbits.add(2);
+                }
+                if (bits.contains(0) && bits.contains(3)) {
+                    wrongbits.add(4);
+                }
+                if (bits.contains(1) && bits.contains(3)) {
+                    wrongbits.add(5);
+                }
+                if (bits.contains(0) && bits.contains(1) && bits.contains(3)) {
+                    wrongbits.add(6);
+                }
+                if (bits.contains(0) && bits.contains(7)) {
+                    wrongbits.add(8);
+                }
+                if (bits.contains(1) && bits.contains(7)) {
+                    wrongbits.add(9);
+                }
+                if (bits.contains(0) && bits.contains(1) && bits.contains(7)) {
+                    wrongbits.add(10);
+                }
+                tostring(phrase.get(i), wrongbits);
             }
         }
     }
