@@ -208,10 +208,9 @@ public class ParityChecking {
             checkbits.add(1);
             checkbits.add(3);
             checkbits.add(7);
-            ArrayList<Integer> dup = (ArrayList<Integer>) bits.clone();
             if (wrong == 0) {
                 tostring(phrase.get(i));
-            } else if (!dup.retainAll(checkbits)) {
+            } else if (wrong == 1) {
                 tostring(phrase.get(i), bits);
             } else {
                 if (bits.contains(0) && bits.contains(1)) {
